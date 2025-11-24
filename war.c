@@ -1,9 +1,6 @@
 // ============================================================================
 //         PROJETO WAR ESTRUTURADO - DESAFIO DE CÓDIGO
-// ============================================================================
-//        
-// ============================================================================
-//
+// ===========================================================================
 // OBJETIVOS:
 // - Modularizar completamente o código em funções especializadas.
 // - Implementar um sistema de missões para um jogador.
@@ -15,13 +12,18 @@
 // ============================================================================
 
 // Inclusão das bibliotecas padrão necessárias para entrada/saída, alocação de memória, manipulação de strings e tempo.
-
+#include <stdio.h>
+#include <string.h>
 // --- Constantes Globais ---
 // Definem valores fixos para o número de territórios, missões e tamanho máximo de strings, facilitando a manutenção.
 
 // --- Estrutura de Dados ---
 // Define a estrutura para um território, contendo seu nome, a cor do exército que o domina e o número de tropas.
-
+struct Territorio {
+    char nome[30];
+    char cor[10];
+    int tropas;
+};
 // --- Protótipos das Funções ---
 // Declarações antecipadas de todas as funções que serão usadas no programa, organizadas por categoria.
 // Funções de setup e gerenciamento de memória:
@@ -32,13 +34,50 @@
 // --- Função Principal (main) ---
 // Função principal que orquestra o fluxo do jogo, chamando as outras funções em ordem.
 int main() {
+    struct Territorio mapa[5];
+    int i;
+
+    printf("==========================================\n");
+    printf("   SISTEMA DE CONSTRUÇÃO DE TERRITÓRIOS   \n");
+    printf("==========================================\n\n");
     // 1. Configuração Inicial (Setup):
     // - Define o locale para português.
     // - Inicializa a semente para geração de números aleatórios com base no tempo atual.
     // - Aloca a memória para o mapa do mundo e verifica se a alocação foi bem-sucedida.
     // - Preenche os territórios com seus dados iniciais (tropas, donos, etc.).
     // - Define a cor do jogador e sorteia sua missão secreta.
+    for(i = 0; i < 5; i++) {
+        printf("--- Cadastrando Território %d de 5 ---\n", i + 1);
+        
+        // Leitura do Nome
+        printf("Digite o nome do território (ex: Gondor): ");
+        // O espaço antes do % serve para limpar o buffer do teclado
+        // [^\n] permite ler nomes compostos (com espaço)
+        scanf(" %[^\n]s", mapa[i].nome); 
 
+        // Leitura da Cor
+        printf("Digite a cor do exército (ex: Azul): ");
+        scanf(" %[^\n]s", mapa[i].cor);
+
+        // Leitura das Tropas
+        printf("Digite a quantidade de tropas: ");
+        scanf("%d", &mapa[i].tropas);
+        
+        printf("\n"); // Pula linha para organização visual
+    }
+
+    printf("\n==========================================\n");
+    printf("      RELATÓRIO FINAL DE TERRITÓRIOS      \n");
+    printf("==========================================\n");
+
+    for(i = 0; i < 5; i++) {
+        printf("ID: %d | Nome: %-15s | Cor: %-10s | Tropas: %d\n", 
+               i + 1, 
+               mapa[i].nome, 
+               mapa[i].cor, 
+               mapa[i].tropas);
+    }
+    printf("==========================================\n");
     // 2. Laço Principal do Jogo (Game Loop):
     // - Roda em um loop 'do-while' que continua até o jogador sair (opção 0) ou vencer.
     // - A cada iteração, exibe o mapa, a missão e o menu de ações.
