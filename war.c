@@ -223,6 +223,15 @@ void faseDeAtaque(Territorio* mapa, int qtd) {
     } else {
         printf("[Erro] IDs invalidos!\n");
     }
+
+
+// --- PAUSA PARA LEITURA (MELHORIA DE USABILIDADE) ---
+// Limpa o buffer (consome o Enter do scanf anterior)
+limparBufferEntrada();
+    
+printf("\n>>> Pressione ENTER para concluir a rodada e voltar ao menu...");
+    // Aguarda o usuário pressionar Enter
+    getchar();
 }
 
 // simularAtaque():
@@ -247,7 +256,7 @@ void simularAtaque(Territorio* atacante, Territorio* defensor) {
     // Simulação dos dados
     int dadoAtk = (rand() % 6) + 1;
     int dadoDef = (rand() % 6) + 1;
-    printf("Dados -> Atacante: %d | Defensor: %d\n", dadoAtk, dadoDef);
+    printf("ambos jogaram o dado e obtiveram -> Atacante: %d | Defensor: %d\n", dadoAtk, dadoDef);
 
     if (dadoAtk > dadoDef) {
         printf("RESULTADO: Vitoria do Atacante!\n");
