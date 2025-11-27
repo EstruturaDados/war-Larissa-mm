@@ -50,7 +50,7 @@ int main() {
         printf("--- Cadastrando Território %d de 5 ---\n", i + 1);
         
         // Leitura do Nome
-        printf("Digite o nome do território (ex: Gondor): ");
+        printf("Digite o nome do território (ex: América): ");
         // O espaço antes do % serve para limpar o buffer do teclado
         // [^\n] permite ler nomes compostos (com espaço)
         scanf(" %[^\n]s", mapa[i].nome); 
