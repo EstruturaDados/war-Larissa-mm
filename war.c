@@ -151,7 +151,7 @@ void inicializarTerritorios(Territorio* mapa, int qtd) {
         scanf(" %[^\n]s", mapa[i].cor);
 
         // Leitura das Tropas
-        printf("Digite a quantidade de tropas: ");
+        printf("Digite a quantidade de tropas(1 a 9): ");
         scanf("%d", &mapa[i].tropas);
     }
 }
