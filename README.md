@@ -31,8 +31,7 @@ A empresa **MateCheck** contratou você para criar uma versão estruturada do WA
 O usuário digita o nome do território, a cor do exército dominante e o número de tropas para **cada um dos 5 territórios**.
 
 ### 📤 Saída
-
-
+Exiba os dados  de cada Territorio de forma clara.
 
 ## 🧗‍♂️ Nível Aventureiro: Batalhas Estratégicas
 
