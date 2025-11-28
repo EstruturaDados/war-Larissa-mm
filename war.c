@@ -228,7 +228,7 @@ void exibirMissao(const char* missao) {
 
 // faseDeAtaque():
 // Gerencia o ataque e verifica vitória.
-// ALTERADO: Pausa após cada ataque e pausa final após 3 tentativas.
+// Pausa após cada ataque e pausa final após 3 tentativas.
 void faseDeAtaque(Territorio* mapa, int qtd, const char* missao, int* jogoAtivo) {
     int idAtk, idDef;
     int i;
@@ -286,7 +286,9 @@ void faseDeAtaque(Territorio* mapa, int qtd, const char* missao, int* jogoAtivo)
 }
 
 // simularAtaque():
-// ALTERADO: Texto dos dados mais explícito.
+// Executa a lógica de uma batalha entre dois territórios.
+// Realiza validações, rola os dados, compara os resultados e atualiza o número de tropas.
+// Se um território for conquistado, atualiza seu dono e move uma tropa.
 void simularAtaque(Territorio* atacante, Territorio* defensor) {
     // Validação: Fogo amigo
     if (strcmp(atacante->cor, defensor->cor) == 0) {
