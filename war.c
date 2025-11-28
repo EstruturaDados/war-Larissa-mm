@@ -254,7 +254,8 @@ void faseDeAtaque(Territorio* mapa, int qtd, const char* missao, int* jogoAtivo)
         if (idxAt >= 0 && idxAt < qtd && idxDf >= 0 && idxDf < qtd) {
             simularAtaque(&mapa[idxAt], &mapa[idxDf]);
             
-            // Verificação silenciosa de vitória após o ataque
+            // Verificação silenciosa de vitória APÓS o ataque
+            // Se verificarMissao retornar 1, o jogo acaba aqui mesmo.
             if (verificarMissao(missao, mapa, qtd)) {
                 printf("\n#################################################\n");
                 printf(" PARABENS! VOCE CUMPRIU SUA MISSAO: \n %s\n", missao);
@@ -287,8 +288,6 @@ void faseDeAtaque(Territorio* mapa, int qtd, const char* missao, int* jogoAtivo)
 
 // simularAtaque():
 // Executa a lógica de uma batalha entre dois territórios.
-// Realiza validações, rola os dados, compara os resultados e atualiza o número de tropas.
-// Se um território for conquistado, atualiza seu dono e move uma tropa.
 void simularAtaque(Territorio* atacante, Territorio* defensor) {
     // Validação: Fogo amigo
     if (strcmp(atacante->cor, defensor->cor) == 0) {
@@ -349,9 +348,10 @@ int verificarMissao(const char* missao, Territorio* mapa, int tamanho) {
         if (contaVermelho == 0) return 1;
     }
     
-    // Lógica para missão "Manter tropas"
+    // Lógica para missão "Manter tropas" - Dominação Total
+    // Se "Manter" (todos), o jogador precisa ter todos os 5 territórios.
     if (strstr(missao, "Manter") != NULL) {
-        if (contaAzul > 0) return 0; // Missão contínua
+        if (contaAzul == tamanho) return 1; 
     }
 
     return 0;
