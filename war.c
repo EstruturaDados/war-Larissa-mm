@@ -14,7 +14,7 @@
 // Inclusão das bibliotecas padrão necessárias para entrada/saída, alocação de memória, manipulação de strings e tempo.
 #include <stdio.h>
 #include <stdlib.h> // malloc, calloc, free, rand, srand
-#include <string.h> // strcpy, strcmp
+#include <string.h> // strcpy, strcmp, strstr
 #include <time.h>   // time
 #include <locale.h> // setlocale
 
@@ -92,7 +92,7 @@ int main() {
         return 1;
     }
 
-    // - Preenche os territórios com seus dados iniciais.
+    // - Preenche os territórios com os dados iniciais.
     inicializarTerritorios(mapa, qtdTerritorios);
 
     // - Define a cor do jogador e sorteia sua missão secreta.
@@ -197,7 +197,7 @@ void liberarMemoria(Territorio* mapa, char* missao) {
 // exibirMenuPrincipal():
 void exibirMenuPrincipal() {
     printf("\n--- MENU DE ACOES ---\n");
-    printf("1. Atacar\n");
+    printf("1. Atacar (3 Tentativas)\n");
     printf("2. Consultar Missao\n");
     printf("0. Sair\n");
     printf("Escolha uma opcao: ");
@@ -228,43 +228,65 @@ void exibirMissao(const char* missao) {
 
 // faseDeAtaque():
 // Gerencia o ataque e verifica vitória.
+// ALTERADO: Pausa após cada ataque e pausa final após 3 tentativas.
 void faseDeAtaque(Territorio* mapa, int qtd, const char* missao, int* jogoAtivo) {
     int idAtk, idDef;
+    int i;
 
-    printf("\n--- PREPARAR ATAQUE ---\n");
-    printf("Digite o ID do territorio ATACANTE (1 a %d): ", qtd);
-    scanf("%d", &idAtk);
+    // Mostra a missão novamente para o jogador lembrar
+    printf("\n>>> LEMBRETE DA MISSAO: %s <<<\n", missao);
 
-    printf("Digite o ID do territorio DEFENSOR (1 a %d): ", qtd);
-    scanf("%d", &idDef);
+    // Loop de 3 Tentativas
+    for(i = 0; i < 3; i++) {
+        if (*jogoAtivo == 0) break; // Se ganhou, para de perguntar
 
-    int idxAt = idAtk - 1;
-    int idxDf = idDef - 1;
+        printf("\n--- TENTATIVA DE ATAQUE %d DE 3 ---\n", i + 1);
+        printf("Digite o ID do territorio ATACANTE (1 a %d) ou 0 para parar: ", qtd);
+        scanf("%d", &idAtk);
+        if (idAtk == 0) break; // Opção de saída antecipada
 
-    if (idxAt >= 0 && idxAt < qtd && idxDf >= 0 && idxDf < qtd) {
-        simularAtaque(&mapa[idxAt], &mapa[idxDf]);
-        
-        // Verificação silenciosa de vitória após o ataque
-        if (verificarMissao(missao, mapa, qtd)) {
-            printf("\n#################################################\n");
-            printf(" PARABENS! VOCE CUMPRIU SUA MISSAO: \n %s\n", missao);
-            printf("#################################################\n");
-            *jogoAtivo = 0; // Encerra o jogo
+        printf("Digite o ID do territorio DEFENSOR (1 a %d): ", qtd);
+        scanf("%d", &idDef);
+
+        int idxAt = idAtk - 1;
+        int idxDf = idDef - 1;
+
+        if (idxAt >= 0 && idxAt < qtd && idxDf >= 0 && idxDf < qtd) {
+            simularAtaque(&mapa[idxAt], &mapa[idxDf]);
+            
+            // Verificação silenciosa de vitória após o ataque
+            if (verificarMissao(missao, mapa, qtd)) {
+                printf("\n#################################################\n");
+                printf(" PARABENS! VOCE CUMPRIU SUA MISSAO: \n %s\n", missao);
+                printf("#################################################\n");
+                *jogoAtivo = 0; // Encerra o jogo
+            }
+
+        } else {
+            printf("[Erro] IDs invalidos!\n");
         }
 
-    } else {
-        printf("[Erro] IDs invalidos!\n");
+        // --- PAUSA PARA LER O RESULTADO (AQUI DENTRO DO LOOP) ---
+        if (*jogoAtivo) {
+            printf("\n(Pressione ENTER para continuar para a proxima tentativa...)");
+            limparBufferEntrada();
+            getchar();
+        }
     }
 
-    // Pausa para leitura
-    limparBufferEntrada();
+    // --- PAUSA FINAL PARA CONCLUIR A RODADA ---
     if (*jogoAtivo) {
-        printf("\n>>> Pressione ENTER para concluir a rodada...");
+        printf("\n>>> Rodada de ataques finalizada. Pressione ENTER para voltar ao menu...");
+        // O buffer pode estar sujo dependendo de como o usuário saiu do loop, 
+        // mas o getchar() anterior geralmente resolve.
+        // Se saiu pelo "break" do 0, precisa limpar.
+        if (i < 3) limparBufferEntrada(); 
         getchar();
     }
 }
 
 // simularAtaque():
+// ALTERADO: Texto dos dados mais explícito.
 void simularAtaque(Territorio* atacante, Territorio* defensor) {
     // Validação: Fogo amigo
     if (strcmp(atacante->cor, defensor->cor) == 0) {
@@ -283,20 +305,22 @@ void simularAtaque(Territorio* atacante, Territorio* defensor) {
     // Simulação dos dados
     int dadoAtk = (rand() % 6) + 1;
     int dadoDef = (rand() % 6) + 1;
-    printf("Dados -> Atacante: %d | Defensor: %d\n", dadoAtk, dadoDef);
+    
+    printf("Ambos jogaram os dados...\n");
+    printf("RESULTADO: O Atacante tirou %d e o Defensor tirou %d.\n", dadoAtk, dadoDef);
 
     if (dadoAtk > dadoDef) {
-        printf("RESULTADO: Vitoria do Atacante!\n");
+        printf("VITORIA DO ATACANTE!\n");
         strcpy(defensor->cor, atacante->cor);
         
         int move = atacante->tropas / 2;
         defensor->tropas = move;
         atacante->tropas -= move;
-        printf("O territorio %s agora pertence ao exercito %s.\n", defensor->nome, defensor->cor);
+        printf("O territorio %s foi conquistado e agora pertence ao exercito %s.\n", defensor->nome, defensor->cor);
     } else {
-        printf("RESULTADO: Vitoria da Defesa!\n");
+        printf("VITORIA DA DEFESA!\n");
         atacante->tropas -= 1;
-        printf("O atacante perdeu 1 tropa.\n");
+        printf("O atacante perdeu 1 tropa na batalha.\n");
     }
 }
 
@@ -321,6 +345,11 @@ int verificarMissao(const char* missao, Territorio* mapa, int tamanho) {
     // Lógica para missão "Eliminar Vermelho" (Assumindo jogador Azul)
     if (strstr(missao, "Vermelho") != NULL) {
         if (contaVermelho == 0) return 1;
+    }
+    
+    // Lógica para missão "Manter tropas"
+    if (strstr(missao, "Manter") != NULL) {
+        if (contaAzul > 0) return 0; // Missão contínua
     }
 
     return 0;
