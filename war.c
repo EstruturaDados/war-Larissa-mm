@@ -159,7 +159,6 @@ Territorio* alocarMapa(int qtd) {
 }
 
 // inicializarTerritorios():
-// Preenche os dados iniciais mantendo o estilo de perguntas solicitado.
 void inicializarTerritorios(Territorio* mapa, int qtd) {
     int i;
     for(i = 0; i < qtd; i++) {
